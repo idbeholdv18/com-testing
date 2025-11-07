@@ -1,16 +1,34 @@
 const BAUD_RATE = 115200;
 
-let ports;
+let port, reader;
 
-// const openSerialPort = async () => {
-//     await port.open({baudRate: BAUD_RATE /* pick your baud rate */});
-// }
+const requestPorts = async () => {
+    port = await navigator.serial.requestPort();
+}
+
+async function readLoop() {
+    const decoder = new TextDecoder();
+    while (port.readable) {
+        try {
+            const { value, done } = await reader.read();
+            if (done) break;
+            document.getElementById("output").textContent += decoder.decode(value);
+        } catch (err) {
+            console.error("read err:", err);
+            break;
+        }
+    }
+}
 
 document.getElementById("serial_connect").addEventListener("click", async () => {
     try {
-        ports = await navigator.serial.requestPort();
-        console.log(ports);
+        await requestPorts();
+        await port.open({ baudRate: BAUD_RATE });
+        reader = port.readable.getReader();
+
+        readLoop()
     } catch (err) {
         console.error(err);
     }
 })
+
