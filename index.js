@@ -12,7 +12,7 @@ async function readLoop() {
         try {
             const { value, done } = await reader.read();
             if (done) break;
-            document.getElementById("output").textContent += decoder.decode(value);
+            document.getElementById("output").textContent = decoder.decode(value);
         } catch (err) {
             console.error("read err:", err);
             break;
