@@ -4,6 +4,16 @@ let port, reader;
 
 const requestPorts = async () => {
     port = await navigator.serial.requestPort();
+    const info = await port.getInfo();
+    console.log(info);
+
+    if (info.usbVendorId === 0x303A) {
+        console.log('correct device');
+        return port;
+    } else {
+        alert('invalid device');
+        return null;
+    }
 }
 
 async function readLoop() {
